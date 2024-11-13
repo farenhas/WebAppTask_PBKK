@@ -18,7 +18,7 @@ type Album struct {
 }
 
 func main() {
-    // Capture connection properties.
+    
     cfg := mysql.Config{
         User:                 "root",
         Passwd:               "",
@@ -28,7 +28,7 @@ func main() {
         AllowNativePasswords: true,
     }
 
-    // Get a database handle.
+    
     var err error
     db, err = sql.Open("mysql", cfg.FormatDSN())
     if err != nil {
@@ -41,21 +41,21 @@ func main() {
     }
     fmt.Println("Connected!")
 
-    // Query albums by artist
+    
     albums, err := albumsByArtist("John Coltrane")
     if err != nil {
         log.Fatal(err)
     }
     fmt.Printf("Albums found: %+v\n", albums)
 
-    // Hard-code ID 2 here to test the query.
+    
     alb, err := albumByID(2)
     if err != nil {
         log.Fatal(err)
     }
     fmt.Printf("Album found: %+v\n", alb)
 
-    // Add a new album to the database
+   
     albID, err := addAlbum(Album{
         Title:  "The Modern Sound of Betty Carter",
         Artist: "Betty Carter",
@@ -67,9 +67,9 @@ func main() {
     fmt.Printf("ID of added album: %v\n", albID)
 }
 
-// albumsByArtist queries for albums that have the specified artist name.
+
 func albumsByArtist(name string) ([]Album, error) {
-    // An albums slice to hold data from returned rows.
+   
     var albums []Album
 
     rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
@@ -78,7 +78,7 @@ func albumsByArtist(name string) ([]Album, error) {
     }
     defer rows.Close()
 
-    // Loop through rows, using Scan to assign column data to struct fields.
+    
     for rows.Next() {
         var alb Album
         if err := rows.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
@@ -92,9 +92,9 @@ func albumsByArtist(name string) ([]Album, error) {
     return albums, nil
 }
 
-// albumByID queries for the album with the specified ID.
+
 func albumByID(id int64) (Album, error) {
-    // An album to hold data from the returned row.
+   
     var alb Album
 
     row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
@@ -107,8 +107,7 @@ func albumByID(id int64) (Album, error) {
     return alb, nil
 }
 
-// addAlbum adds the specified album to the database,
-// returning the album ID of the new entry
+
 func addAlbum(alb Album) (int64, error) {
     result, err := db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)
     if err != nil {
